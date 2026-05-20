@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a0f">
 <title>B23 Procedures</title>
-<link rel="manifest" href="#" id="manifest-link">
+<link rel="manifest" href="/manifest.json">
 <style>
   :root {
     --bg: #0a0a0f;
@@ -1418,17 +1418,6 @@ window.addEventListener('online', () => { document.getElementById('offline-banne
 
 document.body.classList.toggle('light-mode', !state.darkMode);
 document.getElementById('btn-theme').innerHTML = state.darkMode ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-document.getElementById('manifest-link').href = URL.createObjectURL(new Blob([JSON.stringify({
-  name: APP_TITLE,
-  short_name: 'B23',
-  start_url: './',
-  display: 'standalone',
-  background_color: APP_THEME,
-  theme_color: APP_THEME,
-  icons: [
-    { src: svgToDataUrl(APP_ICON_SVG), sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' }
-  ]
-})], { type: 'application/manifest+json' }));
 document.getElementById('install-banner-action').onclick = () => (installBannerAction || triggerInstall)();
 updateInstallButton();
 render();
@@ -1446,26 +1435,7 @@ window.addEventListener('appinstalled', () => {
 });
 
 if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE = 'b23-v2';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll([location.pathname])));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-    const rc = res.clone();
-    caches.open(CACHE).then(c => c.put(e.request, rc));
-    return res;
-  }).catch(() => caches.match('/'))));
-});`;
-  const blob = new Blob([swCode], {type:'application/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(()=>{});
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 </script>
 </body>
