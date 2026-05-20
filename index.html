@@ -281,11 +281,11 @@
 <body>
 <div id="offline-banner">— Offline — cached procedures available</div>
 <div id="install-banner" role="status" aria-live="polite">
-  <div id="install-banner-title">Install App</div>
+  <div id="install-banner-title">App installeren</div>
   <div id="install-banner-text"></div>
   <div id="install-banner-actions">
-    <button class="install-banner-btn primary" id="install-banner-action" type="button">Install</button>
-    <button class="install-banner-btn" type="button" onclick="closeInstallBanner()">Close</button>
+    <button class="install-banner-btn primary" id="install-banner-action" type="button">Installeren</button>
+    <button class="install-banner-btn" type="button" onclick="closeInstallBanner()">Sluiten</button>
   </div>
 </div>
 <div id="app">
@@ -1398,12 +1398,18 @@ async function triggerInstall() {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (isIOS && isSafari) {
     installBannerAction = closeInstallBanner;
-    openInstallBanner('Open Safari share menu and choose "Add to Home Screen" to install this app as a PWA.', 'Close');
+    openInstallBanner('Tik op het deel-icoon ↗ onderaan Safari (het vierkantje met pijltje omhoog), scroll dan naar „Zet op beginscherm” en tik op Voeg toe.', 'Sluiten');
+    return;
+  }
+
+  if (isIOS && !isSafari) {
+    installBannerAction = closeInstallBanner;
+    openInstallBanner('Open deze pagina in Safari om de app te installeren. Chrome en Firefox op iOS ondersteunen PWA-installatie niet.', 'Sluiten');
     return;
   }
 
   installBannerAction = closeInstallBanner;
-  openInstallBanner('Install is available in browsers that support web app prompts. On desktop Chrome or Edge this button will activate automatically.', 'Close');
+  openInstallBanner('Installeren werkt automatisch in Chrome of Edge op desktop en Android. Tik op de installatieknop in de adresbalk.', 'Sluiten');
 }
 
 function toggleTheme() {
