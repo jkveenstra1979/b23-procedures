@@ -1,9 +1,3 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/b23-procedures.html"
-    }
-  ]
+  "cleanUrls": true
 }

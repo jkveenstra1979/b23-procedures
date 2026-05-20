@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>B23 Procedures</title>
+<link rel="manifest" href="#" id="manifest-link">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: rgba(255,255,255,0.08);
+    --accent: #4a9eff;
+    --accent-dim: rgba(74,158,255,0.12);
+    --text: #f0f0f5;
+    --text-2: #9090a8;
+    --text-3: #5a5a72;
+    --warning: #ffaa44;
+    --danger: #ff5555;
+    --success: #44cc88;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  .light-mode {
+    --bg: #f5f5f8;
+    --surface: #ffffff;
+    --surface2: #eeeef5;
+    --border: rgba(0,0,0,0.08);
+    --accent: #1a6fd4;
+    --accent-dim: rgba(26,111,212,0.1);
+    --text: #0a0a1a;
+    --text-2: #444460;
+    --text-3: #888899;
+    --warning: #cc7700;
+    --danger: #cc2222;
+    --success: #228855;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Display', -apple-system, 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+  #app { display: flex; flex-direction: column; height: 100dvh; }
+
+  /* HEADER */
+  #header {
+    padding: 12px 16px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  #header-top {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  #logo {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--accent); text-transform: uppercase;
+    background: var(--accent-dim);
+    padding: 5px 10px; border-radius: 6px;
+    border: 1px solid rgba(74,158,255,0.2);
+    white-space: nowrap;
+  }
+  #header-title { font-size: 17px; font-weight: 600; flex: 1; }
+  #header-actions { display: flex; align-items: center; gap: 8px; }
+  .header-btn {
+    height: 36px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 13px; font-weight: 600; padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .header-btn svg { flex-shrink: 0; }
+  #btn-install.ready {
+    background: var(--accent-dim);
+    border-color: rgba(74,158,255,0.28);
+    color: var(--accent);
+  }
+  #btn-theme {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+    flex-shrink: 0;
+  }
+  #search-row { display: flex; gap: 8px; padding-bottom: 10px; }
+  #search {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px 10px 38px;
+    color: var(--text); font-size: 15px; outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239090a8' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+  }
+  #search::placeholder { color: var(--text-3); }
+  #search:focus { border-color: var(--accent); }
+  #tab-fav {
+    padding: 0 14px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text-2); cursor: pointer; font-size: 13px;
+    white-space: nowrap; display: flex; align-items: center; gap: 5px;
+  }
+  #tab-fav.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+  /* CONTENT */
+  #content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* HOME: category list */
+  #home-view { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .cat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: background 0.15s;
+    -webkit-user-select: none; user-select: none;
+  }
+  .cat-card:active { background: var(--surface2); }
+  .cat-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .cat-info { flex: 1; }
+  .cat-name { font-size: 15px; font-weight: 600; }
+  .cat-count { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .cat-arrow { color: var(--text-3); font-size: 18px; }
+  .cat-card.has-fav .cat-arrow::after { content: ' ◆'; font-size: 11px; color: var(--warning); }
+
+  /* SECTION: procedure list */
+  #section-view { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  #section-header {
+    display: flex; align-items: center; gap: 10px; padding: 4px 0 8px;
+  }
+  #btn-back {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  #section-title { font-size: 16px; font-weight: 700; }
+  .proc-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .proc-item:active { background: var(--surface2); }
+  .proc-item-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .fav-star {
+    font-size: 18px; color: var(--text-3); cursor: pointer; padding: 4px;
+    flex-shrink: 0; transition: color 0.15s;
+  }
+  .fav-star.starred { color: var(--warning); }
+
+  /* DETAIL: checklist */
+  #detail-view { padding: 12px; }
+  #detail-header {
+    display: flex; align-items: flex-start; gap: 10px; padding: 4px 0 14px;
+  }
+  #detail-title { font-size: 18px; font-weight: 700; flex: 1; line-height: 1.3; }
+  #detail-fav {
+    font-size: 22px; color: var(--text-3); cursor: pointer; padding: 2px 4px;
+    flex-shrink: 0; transition: color 0.15s; background: none; border: none;
+  }
+  #detail-fav.starred { color: var(--warning); }
+  .step-list { display: flex; flex-direction: column; gap: 6px; }
+  .step-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    background: var(--surface); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s; position: relative;
+  }
+  .step-item.done {
+    background: rgba(68,204,136,0.06);
+    border-color: rgba(68,204,136,0.2);
+  }
+  .step-item.done .step-text { text-decoration: line-through; color: var(--text-3); }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--text-3);
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .step-item.done .step-num {
+    background: var(--success); border-color: var(--success); color: #fff;
+    font-size: 14px;
+  }
+  .step-num.done-icon::after { content: '✓'; }
+  .step-text { font-size: 14px; line-height: 1.5; padding-top: 4px; }
+  .step-text em { color: var(--warning); font-style: normal; font-weight: 600; }
+  .step-text .warn { color: var(--danger); font-weight: 700; }
+  .step-sublist { margin-top: 6px; padding-left: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .step-subitem { font-size: 13px; color: var(--text-2); padding: 2px 0; display: flex; gap: 8px; }
+  .step-subitem::before { content: '—'; color: var(--text-3); flex-shrink: 0; }
+
+  #reset-btn {
+    margin-top: 16px; width: 100%; padding: 13px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text-2); font-size: 14px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  #reset-btn:active { background: var(--surface); }
+
+  /* NOTES block */
+  .note-block {
+    background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.2);
+    border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 6px;
+  }
+  .note-block.warn-block {
+    background: rgba(255,85,85,0.08); border-color: rgba(255,85,85,0.2);
+  }
+  .note-block p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+  .note-block .note-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .note-block.warn-block .note-label { color: var(--danger); }
+
+  /* SEARCH results */
+  #search-view { padding: 12px; }
+  .search-result {
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    background: var(--surface); border: 1px solid var(--border);
+    margin-bottom: 8px; cursor: pointer;
+  }
+  .search-result:active { background: var(--surface2); }
+  .sr-proc { font-size: 14px; font-weight: 600; }
+  .sr-cat { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  mark { background: rgba(74,158,255,0.25); color: var(--accent); border-radius: 3px; padding: 0 2px; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-3); font-size: 14px; }
+
+  /* Offline banner */
+  #offline-banner {
+    display: none; background: var(--warning); color: #000;
+    text-align: center; padding: 8px; font-size: 13px; font-weight: 600;
+  }
+  #install-banner {
+    display: none;
+    margin: 10px 16px 0;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(74,158,255,0.2);
+    background: var(--accent-dim);
+    color: var(--text);
+  }
+  #install-banner.show { display: block; }
+  #install-banner-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  #install-banner-text { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+  #install-banner-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .install-banner-btn {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 999px;
+    height: 34px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .install-banner-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  @media (max-width: 640px) {
+    #header-top { flex-wrap: wrap; }
+    #header-actions { margin-left: auto; }
+    #btn-install .install-label { display: none; }
+    #btn-install { width: 36px; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="offline-banner">— Offline — cached procedures available</div>
+<div id="install-banner" role="status" aria-live="polite">
+  <div id="install-banner-title">Install App</div>
+  <div id="install-banner-text"></div>
+  <div id="install-banner-actions">
+    <button class="install-banner-btn primary" id="install-banner-action" type="button">Install</button>
+    <button class="install-banner-btn" type="button" onclick="closeInstallBanner()">Close</button>
+  </div>
+</div>
+<div id="app">
+  <div id="header">
+    <div id="header-top">
+      <div id="logo">B23</div>
+      <div id="header-title">Flight Procedures</div>
+      <div id="header-actions">
+        <button id="btn-install" class="header-btn" type="button" onclick="triggerInstall()" title="Install app">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span class="install-label">Install</span>
+        </button>
+        <button id="btn-theme" onclick="toggleTheme()" title="Toggle theme" type="button" style="display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg></button>
+      </div>
+    </div>
+    <div id="search-row">
+      <input id="search" type="search" placeholder="Search procedures…" oninput="onSearch(this.value)" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button id="tab-fav" onclick="toggleFavView()">Bookmarks</button>
+    </div>
+  </div>
+  <div id="content">
+    <div id="home-view"></div>
+    <div id="section-view" style="display:none"></div>
+    <div id="detail-view" style="display:none"></div>
+    <div id="search-view" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const PROCEDURES = [
+  {
+    id: "takeoff",
+    cat: "Takeoff",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M3 17h18M3 7l5 3 4-4 9 5"/></svg>`,
+    color: "#1a6fd4",
+    bg: "rgba(26,111,212,0.15)",
+    procs: [
+      {
+        id: "normal-to",
+        name: "Normal Take-off",
+        steps: [
+          { t: "Check the windsock, confirm crosswind within limits" },
+          { t: "Check base, final and runway for traffic conflict" },
+          { t: "Identify and verify correct runway and/or intersection" },
+          { t: "Line up on the runway centerline" },
+          { t: "Brakes apply with feet" },
+          { t: "Identify the runway and check headings (G3X and EFIS)" },
+          { t: "Confirm Checklist complete" },
+          { t: "Stick into the wind" },
+          { t: "Take an aiming point or Outside Reference Point" },
+          { t: "Call <em>\"Take-off\"</em> when take-off clearance received and ready to commence take-off procedure" },
+          { t: "Heels on the floor, release brakes while smoothly applying full power" },
+          { t: "Maintain directional control with rudder" },
+          { t: "Check engine instruments" },
+          { t: "Check airspeed increasing, call <em>\"Airspeed Alive\"</em>" },
+          { t: "Reduce aileron input as airspeed increases, glareshield parallel to horizon" },
+          { t: "Lift-off at <em>50 kt</em>, initial climb <em>64 kt</em>" },
+          { t: "Accelerate to climb speed <em>74 KIAS (Vy)</em>" },
+          { t: "At Vy 74 kt and at <em>250 ft AGL</em> — Flaps UP, adjust trim" },
+          { t: "Propeller Control set <em>5400 RPM</em>, max continuous power" },
+          { t: "Fuel Pump OFF above <em>1000 ft AGL</em>" },
+          { t: "Accomplish AFTER TAKE OFF checklist" }
+        ]
+      },
+      {
+        id: "short-soft-to",
+        name: "Short & Soft Field Take-off",
+        steps: [
+          { t: "Proceed as normal take-off (items 1–10)" },
+          { t: "Maintain full brake pressure with feet" },
+          { t: "Slowly and smoothly apply full throttle" },
+          { t: "Check power/engine instruments" },
+          { t: "Release brakes, heels on the floor" },
+          { t: "Maintain directional control with rudder" },
+          { t: "Stick aft to lift nosewheel as soon as possible" },
+          { t: "As nosewheel rises, release backpressure slightly" },
+          { t: "As aircraft becomes airborne, level off in ground effect" },
+          { t: "Accelerate to <em>Vx</em> or <em>Vy</em> in ground effect" },
+          { t: "Proceed as normal take-off (items 19–21)" }
+        ]
+      },
+      {
+        id: "obstacle-to",
+        name: "Obstacle Take-off",
+        steps: [
+          { t: "Proceed as short field take-off (items 1–7)" },
+          { t: "Climb at <em>64 KIAS (Vx flaps 10)</em>" },
+          { t: "After clearing the obstacle, accelerate to <em>74 KIAS (Vy)</em>" },
+          { t: "Proceed according normal take-off (items 19–21)" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "flight",
+    cat: "Flight",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M15 11.085h5a2 2 0 0 1 0 4h-15l-3 3h-1v-3l1-1v-2l-1-1V8h1l3 3h5V4a1 1 0 0 1 2 0v7.085z"/></svg>`,
+    color: "#1d9e75",
+    bg: "rgba(29,158,117,0.15)",
+    procs: [
+      {
+        id: "climb",
+        name: "Climb",
+        steps: [
+          { t: "Visually check airspace above and in front of flight path" },
+          { t: "Check engine instruments within limits" },
+          { t: "Propeller control set <em>5400 RPM</em>" },
+          { t: "Pitch to climb attitude" },
+          { t: "As airspeed approaches <em>74 KIAS (Vy)</em> smoothly apply full throttle" },
+          { t: "Trim as required" },
+          { t: "Maintain coordinated flight with rudder" },
+          { t: "In extended climbs deviate up to <em>30° left and right</em> of track to enhance visual lookout (max 15° bank)" },
+          { t: "Accomplish CLIMB checklist" }
+        ]
+      },
+      {
+        id: "cruise-climb",
+        name: "Cruise Climb",
+        steps: [
+          { t: "Visually check airspace clear above and in front of flight path" },
+          { t: "Check engine instruments within limits" },
+          { t: "Propeller control set <em>5400 RPM</em>" },
+          { t: "Slight pitch to achieve <em>90 KIAS</em>" },
+          { t: "Smoothly apply full throttle" },
+          { t: "Trim as required" },
+          { t: "Maintain coordinated flight with rudder" },
+          { t: "Accomplish CLIMB checklist" }
+        ]
+      },
+      {
+        id: "level-from-climb",
+        name: "Level-off from Climb",
+        steps: [
+          { t: "±20 ft before the desired level-off altitude, pitch for horizontal flight" },
+          { t: "Maintain direction with rudder, no bank" },
+          { t: "Allow aircraft to accelerate to <em>100 KIAS</em>" },
+          { t: "Readjust pitch and trim" },
+          { t: "Throttle slowly and smoothly reduce to <em>25″ MAP</em>" },
+          { t: "Propeller control set <em>5000 RPM</em>" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" },
+          { t: "Accomplish CRUISE checklist" }
+        ]
+      },
+      {
+        id: "descent-500",
+        name: "Descent @ 500 ft/min",
+        steps: [
+          { t: "Visually check airspace clear below and in front of flight path" },
+          { t: "Throttle slowly reduce to <em>20″ MAP</em>" },
+          { t: "Verify propeller control max <em>5000 RPM</em>" },
+          { t: "Pitch to maintain <em>100 KIAS</em>" },
+          { t: "Maintain direction with rudder" },
+          { t: "Readjust pitch and trim" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" },
+          { t: "Accomplish DESCENT checklist" }
+        ]
+      },
+      {
+        id: "descent-1000",
+        name: "Descent @ 1,000 ft/min",
+        steps: [
+          { t: "Visually check airspace clear below and in front of flight path" },
+          { t: "Throttle slowly reduce to <em>15″ MAP</em>" },
+          { t: "Verify propeller control max <em>5000 RPM</em>" },
+          { t: "Pitch to maintain <em>100 KIAS</em>" },
+          { t: "Maintain direction with rudder" },
+          { t: "Readjust pitch and trim" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" },
+          { t: "Accomplish DESCENT checklist" }
+        ]
+      },
+      {
+        id: "level-from-descent",
+        name: "Level-off from Descent",
+        steps: [
+          { t: "Verify propeller control <em>5000 RPM</em>" },
+          { t: "±20 ft before desired altitude, set throttle to <em>±25″ MAP</em>" },
+          { t: "Pitch for horizontal flight" },
+          { t: "Maintain direction with rudder" },
+          { t: "Readjust pitch and trim" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" },
+          { t: "Accomplish CRUISE checklist" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "speed",
+    cat: "Speed & Config",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 2l-6.5 11h5.5l-1 9 8.5-13h-6l2.5-7z"/></svg>`,
+    color: "#ba7517",
+    bg: "rgba(186,117,23,0.15)",
+    procs: [
+      {
+        id: "decel-60-clean",
+        name: "Decel: Cruise → 60 KIAS (Clean)",
+        steps: [
+          { t: "Throttle reduce to <em>±15″ MAP</em>" },
+          { t: "Maintain altitude and direction" },
+          { t: "Adjust trim" },
+          { t: "Below <em>70 KIAS</em> — call <em>\"Propeller Full Forward\"</em>" },
+          { t: "Approaching <em>60 KIAS</em> — throttle <em>±20″ MAP</em>" },
+          { t: "Adjust pitch for airspeed and throttle for altitude" }
+        ]
+      },
+      {
+        id: "accel-60-clean",
+        name: "Accel: 60 KIAS (Clean) → Cruise",
+        steps: [
+          { t: "Throttle full power" },
+          { t: "Maintain altitude and direction" },
+          { t: "Adjust trim" },
+          { t: "Propeller Control <em>5400 RPM</em>" },
+          { t: "Approaching <em>100 KIAS</em> — throttle <em>25″ MAP</em> &amp; Propeller <em>5000 RPM</em>" }
+        ]
+      },
+      {
+        id: "decel-55-ldg",
+        name: "Decel: Cruise → 55 KIAS (Landing Config)",
+        steps: [
+          { t: "Throttle reduce to <em>±15″ MAP</em>" },
+          { t: "Maintain altitude and direction" },
+          { t: "Adjust trim" },
+          { t: "At <em>75 KIAS</em> — call <em>\"Flaps 10\"</em>" },
+          { t: "At <em>70 KIAS</em> — call <em>\"Flaps 25\"</em>" },
+          { t: "Below <em>70 KIAS</em> — call <em>\"Propeller Full Forward\"</em>" },
+          { t: "Approaching <em>55 KIAS</em> — throttle <em>±22″ MAP</em>" },
+          { t: "Adjust pitch for airspeed and throttle for altitude" }
+        ]
+      },
+      {
+        id: "accel-55-ldg",
+        name: "Accel: 55 KIAS (Landing Config) → Cruise",
+        steps: [
+          { t: "Throttle full power" },
+          { t: "Maintain altitude and direction" },
+          { t: "Call <em>\"Flaps 10\"</em>" },
+          { t: "Adjust trim" },
+          { t: "Above <em>65 KIAS</em> — call <em>\"Flaps UP\"</em>" },
+          { t: "Adjust trim" },
+          { t: "Propeller Control <em>5400 RPM</em>" },
+          { t: "Approaching <em>100 KIAS</em> — throttle <em>25″ MAP</em> &amp; Propeller <em>5000 RPM</em>" }
+        ]
+      },
+      {
+        id: "high-airspeed",
+        name: "Flight at Critically High Airspeed",
+        warning: "WITH FLIGHT INSTRUCTOR AND SMOOTH AIR ONLY",
+        steps: [
+          { t: "ESP-X OFF" },
+          { t: "Throttle full power (monitor MAP: <em>max 28.5″ at 5000 RPM</em>)" },
+          { t: "Pitch down slightly below the horizon" },
+          { t: "When airspeed approaches <span class='warn'>RED ARC — THROTTLE REDUCE POWER — DO NOT EXCEED Vne!</span>" },
+          { t: "Smoothly and gently pitch up to (cruise) climb attitude" },
+          { t: "Propeller Control <em>5400 RPM</em>" },
+          { t: "When speed approaches desired climb speed, throttle full power" },
+          { t: "Climb back to desired altitude using (cruise) climb procedures" },
+          { t: "ESP-X ON" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "turns",
+    cat: "Turns",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M20 11a8 8 0 1 0-16 0"/><path d="M4 11l-2 2 2 2"/></svg>`,
+    color: "#7f77dd",
+    bg: "rgba(127,119,221,0.15)",
+    procs: [
+      {
+        id: "normal-turns",
+        name: "Normal Turns",
+        note: "Up to 30° AOB VFR or rate 1 for simulated IFR. No power adjustments needed.",
+        steps: [
+          { t: "Visually check airspace clear of flight path" },
+          { t: "Smoothly roll into <em>30° of bank</em>, apply rudder to overcome adverse yaw" },
+          { t: "Check: Bank / Slip / Pitch / VSI / Altitude" },
+          { t: "Roll out <em>½ bank angle</em> in degrees prior required heading" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" }
+        ]
+      },
+      {
+        id: "climbing-turns",
+        name: "Climbing Turns",
+        steps: [
+          { t: "Visually check airspace clear of flight path" },
+          { t: "Assume required climb speed and power settings" },
+          { t: "Smoothly roll into <em>15° of bank</em>, apply rudder to overcome adverse yaw" },
+          { t: "Check: Bank / Slip / Pitch / VSI / Altitude" },
+          { t: "Roll out <em>½ bank angle</em> prior required heading" },
+          { t: "Continue climb or maintain altitude and accelerate to cruise speed" },
+          { t: "Adjust Trim" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" }
+        ]
+      },
+      {
+        id: "descending-turns",
+        name: "Descending Turns",
+        steps: [
+          { t: "Visually check airspace clear of flight path" },
+          { t: "Assume required descent speed and power settings" },
+          { t: "Smoothly roll into <em>30° of bank</em>, apply rudder to overcome adverse yaw" },
+          { t: "Check: Bank / Slip / Pitch / VSI / Altitude" },
+          { t: "Roll out <em>½ bank angle</em> prior required heading" },
+          { t: "Continue descent or maintain altitude and accelerate to cruise speed" },
+          { t: "Adjust Trim" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" }
+        ]
+      },
+      {
+        id: "steep-turns",
+        name: "Steep Turns",
+        note: "360° coordinated • 45° constant bank • constant altitude • 100 KIAS ±27″ MAP 5000 RPM",
+        steps: [
+          { t: "ESP-X OFF" },
+          { t: "Fuel selector fullest tank, fuel pump ON" },
+          { t: "Visually check airspace left and right clear of flight path" },
+          { t: "Smoothly roll into <em>45° of bank</em>, apply rudder to overcome adverse yaw" },
+          { t: "When passing <em>30° of bank</em> — throttle increase power by <em>1–2″ MAP</em>" },
+          { t: "Check: Bank / VSI / Slip / Pitch / Altitude" },
+          { t: "Roll out <em>½ bank angle (±20°)</em> prior required heading" },
+          { t: "Throttle decrease power by <em>1–2″ MAP</em> to <em>±25″ MAP</em>" },
+          { t: "Cross check: Altitude, Pitch, Speed, Power Setting, Direction &amp; Track" },
+          { t: "Fuel pump OFF" },
+          { t: "ESP-X ON" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "unusual",
+    cat: "Unusual Attitudes",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 9v4m0 4h.01M10.363 3.591L2.257 17.125a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636-2.87L13.637 3.59a1.914 1.914 0 0 0-3.274 0z"/></svg>`,
+    color: "#d85a30",
+    bg: "rgba(216,90,48,0.15)",
+    procs: [
+      {
+        id: "spiral-dive",
+        name: "Spiral Dive — Entry & Recovery",
+        warning: "WITH FLIGHT INSTRUCTOR ONLY",
+        steps: [
+          { t: "<strong>ENTRY</strong> (FI)" },
+          { t: "ESP-X OFF" },
+          { t: "Visually check airspace clear" },
+          { t: "Start steep turn with <em>60° of bank</em>" },
+          { t: "Lower nose gently below the horizon" },
+          { t: "Apply gentle backpressure while maintaining steep turn" },
+          { t: "Notice increase of airspeed and G force" },
+          { t: "FI calls <em>\"Recover\"</em>" },
+          { t: "<strong>Student calls: <em>\"Upset, My Controls\"</em></strong>" },
+          { t: "<strong>RECOVERY</strong>" },
+          { t: "Unload the aircraft" },
+          { t: "Roll out coordinated and simultaneously close the throttle" },
+          { t: "Check airspeed <em>&lt; Vno</em>" },
+          { t: "Gently pull out of the dive wings level" },
+          { t: "Throttle full power when passing through the horizon" },
+          { t: "Climb back to the desired altitude" },
+          { t: "ESP-X ON" }
+        ]
+      },
+      {
+        id: "upset-nose-low",
+        name: "Upset Recovery — Nose Low",
+        steps: [
+          { t: "Unload" },
+          { t: "Roll out coordinated" },
+          { t: "Simultaneously close the throttle" },
+          { t: "Check speed <em>&lt; Vno</em>" },
+          { t: "Pull gently out of the dive, wings level" },
+          { t: "Full throttle when nose is passing the horizon" },
+          { t: "Climb back to desired altitude" }
+        ]
+      },
+      {
+        id: "upset-nose-high",
+        name: "Upset Recovery — Nose High",
+        steps: [
+          { t: "Unload" },
+          { t: "If needed, roll to max <em>60° bank</em>" },
+          { t: "Throttle as needed (at very low speed, power may be needed; expect upward pitch tendency)" },
+          { t: "As nose passes through horizon, check for increasing airspeed" },
+          { t: "Roll out coordinated, wings level" },
+          { t: "Smoothly pull out of dive and set climb attitude" },
+          { t: "Throttle full power" },
+          { t: "Climb back to the desired altitude" }
+        ]
+      },
+      {
+        id: "spin-recovery",
+        name: "Inadvertent Spin Recovery (PARE)",
+        warning: "Aerobatics and intentional spins are PROHIBITED for the B23",
+        steps: [
+          { t: "<em>P</em> — Power: IDLE" },
+          { t: "<em>A</em> — Ailerons: NEUTRAL" },
+          { t: "<em>R</em> — Rudder: Full opposite to rotation" },
+          { t: "<em>E</em> — Elevator: Push FORWARD" },
+          { t: "Flaps: RETRACT" },
+          { t: "— When rotation stops —" },
+          { t: "Rudder pedals: NEUTRAL" },
+          { t: "Level wings and ease out of ensuing dive" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "stall",
+    cat: "Stall Exercises",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M3 12h18M3 12l4-4m-4 4l4 4M12 3v18"/></svg>`,
+    color: "#9090a8",
+    bg: "rgba(144,144,168,0.15)",
+    procs: [
+      {
+        id: "prestall-checks",
+        name: "Pre-Stall Checks (APOS)",
+        note: "Must be completed before EVERY stall exercise",
+        steps: [
+          { t: "<strong>INSIDE CHECK</strong>" },
+          { t: "Loose objects — Stowed &amp; secure" },
+          { t: "Seat belts — Fastened &amp; secure" },
+          { t: "Fuel selector — Fullest tank" },
+          { t: "Fuel pump — ON" },
+          { t: "Autopilot &amp; Flight Director — OFF" },
+          { t: "ESP-X — OFF" },
+          { t: "Engine instruments — Check within limits" },
+          { t: "<strong>OUTSIDE CHECK (APOS)</strong>" },
+          { t: "<em>A</em>ltitude — Check min altitude: <em>2000 ft AGL with FI / 3000 ft solo</em>" },
+          { t: "<em>P</em>osition — Not above: built-up areas, harbors, airports/CTR, extended water, 4/8+ cloud, other traffic" },
+          { t: "<em>O</em>rientation — Check position using landmarks" },
+          { t: "<em>S</em>ky Clear — Clearing turns: 90° + reverse 90°, or 180°" },
+          { t: "Call <em>\"Pre-stall Checks Complete\"</em>" }
+        ]
+      },
+      {
+        id: "stall-clean",
+        name: "Approach to Stall — Clean",
+        steps: [
+          { t: "Confirm pre-stall checks completed" },
+          { t: "Select outside reference point or heading" },
+          { t: "Throttle <em>18″ MAP</em>" },
+          { t: "Below <em>70 KIAS</em> — call <em>\"Propeller Full Forward\"</em>" },
+          { t: "Throttle IDLE" },
+          { t: "Maintain altitude, do not trim below <em>75 KIAS</em>" },
+          { t: "Maintain direction with rudder, ailerons neutral" },
+          { t: "Elevator smoothly back to maintain altitude as airspeed decreases" },
+          { t: "Recover on: stall warning / buffet / bottom of green arc" },
+          { t: "<strong>RECOVERY</strong>" },
+          { t: "Call <em>\"Stall, My Controls\"</em> — pitch down to decrease AoA" },
+          { t: "Maintain direction with rudder" },
+          { t: "Check for increasing airspeed" },
+          { t: "Pull out of dive while throttle to full as nose passes horizon" },
+          { t: "Pitch to climb attitude <em>74 KIAS (Vy)</em>" },
+          { t: "Propeller Control <em>5400 RPM</em>" },
+          { t: "Climb to required altitude" },
+          { t: "Cruise attitude, accelerate to <em>100 KIAS</em> — throttle <em>25″ MAP</em>, Prop <em>5000 RPM</em>" }
+        ]
+      },
+      {
+        id: "stall-clean-turn",
+        name: "Approach to Stall — Clean, Climbing Turn",
+        steps: [
+          { t: "Confirm pre-stall checks completed" },
+          { t: "Call <em>\"Propeller Full Forward\"</em>" },
+          { t: "Pitch for normal climb attitude" },
+          { t: "Start climbing turn with <em>15° of bank</em>" },
+          { t: "Slowly raise the nose until airspeed bleeds off" },
+          { t: "Recover on: stall warning / buffet / bottom of green arc" },
+          { t: "<strong>RECOVERY</strong>" },
+          { t: "Call <em>\"Stall, My Controls\"</em> — lower the nose" },
+          { t: "Roll out of the turn" },
+          { t: "Descend or climb to desired altitude" },
+          { t: "Pitch cruise attitude, accelerate to <em>100 KIAS</em> — throttle <em>25″</em>, Prop <em>5000 RPM</em>" }
+        ]
+      },
+      {
+        id: "full-stall-power",
+        name: "Full Stall &amp; Recovery — With Power",
+        steps: [
+          { t: "Confirm pre-stall checks completed" },
+          { t: "Throttle <em>18″ MAP</em>" },
+          { t: "Below <em>70 KIAS</em> — call <em>\"Propeller Full Forward\"</em>" },
+          { t: "Throttle IDLE" },
+          { t: "Maintain altitude, do not trim below <em>75 KIAS</em>" },
+          { t: "Maintain direction with rudder, ailerons neutral" },
+          { t: "Elevator smoothly back to maintain altitude" },
+          { t: "When stall warning sounds — call <em>\"Continue\"</em>, maintain backpressure" },
+          { t: "Recover at: nose/wing drop / excessive rate of descent / loss of elevator" },
+          { t: "<strong>RECOVERY</strong>" },
+          { t: "Call <em>\"Stall, My Controls\"</em> — pitch down below glide attitude" },
+          { t: "Maintain direction with rudder" },
+          { t: "Pull out while throttle to full as nose passes horizon" },
+          { t: "Climb attitude <em>74 KIAS (Vy)</em>, Prop <em>5400 RPM</em>" },
+          { t: "Climb to altitude, cruise at <em>100 KIAS</em> — throttle <em>25″</em>, Prop <em>5000 RPM</em>" }
+        ]
+      },
+      {
+        id: "stall-ldg-config",
+        name: "Approach to Stall — Landing Config",
+        steps: [
+          { t: "Confirm pre-stall checks completed" },
+          { t: "Throttle <em>18″ MAP</em>" },
+          { t: "Below <em>70 KIAS</em>: Flaps 10, Propeller Full Forward, Flaps 25" },
+          { t: "Maintain altitude, do not trim below <em>75 KIAS</em>" },
+          { t: "Throttle IDLE" },
+          { t: "Maintain direction with rudder, ailerons neutral" },
+          { t: "Elevator smoothly back" },
+          { t: "Recover on: stall warning / buffet / bottom of white arc" },
+          { t: "<strong>RECOVERY</strong>" },
+          { t: "Call <em>\"Stall, My Controls\"</em> — pitch down, throttle FULL" },
+          { t: "Call <em>\"Flaps 10\"</em>" },
+          { t: "Maintain direction with rudder" },
+          { t: "Above <em>74 KIAS Vy</em> — call <em>\"Flaps UP\"</em>" },
+          { t: "Prop <em>5400 RPM</em>, climb to altitude" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "circuit",
+    cat: "Circuit & Landing",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M3 17h18M17 9l-5 4-4-5-9 3 1 2h14l1-1 3-2-1-1z"/></svg>`,
+    color: "#1d9e75",
+    bg: "rgba(29,158,117,0.15)",
+    procs: [
+      {
+        id: "std-circuit",
+        name: "Standard Circuit",
+        steps: [
+          { t: "Climbing turn to crosswind after passing <em>500 ft</em> (max 15° bank)" },
+          { t: "Climb to circuit altitude and level off" },
+          { t: "Carb heat ON only when OAT &lt;10°C" },
+          { t: "Throttle <em>±22″ MAP</em>, propeller <em>5000 RPM</em>, <em>80 KIAS</em>" },
+          { t: "Look out and turn to downwind (30° bank)" },
+          { t: "Downwind checks: Brakes / Fuel selector fullest / Carb heat (OAT) / Fuel pump ON / A/P OFF / Crosswind within limits" },
+          { t: "Turn to base leg when runway is <em>45° behind</em>" },
+          { t: "Reduce throttle to <em>±15″ MAP</em> after turning base" },
+          { t: "Call <em>\"Flaps 10\"</em>" },
+          { t: "Start descent, adjust trim" },
+          { t: "Pitch for <em>70 KIAS</em>" },
+          { t: "Turn to final with <em>±20°, max 30° of bank</em>" },
+          { t: "Call <em>\"Flaps 25\"</em>" },
+          { t: "Pitch for <em>65 KIAS</em>" },
+          { t: "Adjust trim" },
+          { t: "Establish <em>3° glide path</em>" },
+          { t: "On short final — call <em>\"Propeller full forward\"</em>" },
+          { t: "On short final — Carb heat OFF (if on)" },
+          { t: "Call <em>\"Landing Checklist\"</em> &amp; accomplish LANDING CHECKLIST" }
+        ]
+      },
+      {
+        id: "normal-ldg",
+        name: "Normal Landing",
+        steps: [
+          { t: "Fly the STANDARD CIRCUIT (items 1–19)" },
+          { t: "Adjust aimpoint and airspeed to desired touchdown point" },
+          { t: "Start the flare and horizontal flight just before touchdown" },
+          { t: "Smoothly close the throttle" },
+          { t: "Rudder to align nose with runway centerline" },
+          { t: "Aileron to stay over centerline and control drift" },
+          { t: "Increase pitch attitude, maintain level flight" },
+          { t: "Touch down on main wheels" },
+          { t: "Hold backpressure on stick to guard nosewheel" },
+          { t: "Smoothly lower the nose" },
+          { t: "Elevator neutral, maintain stick into the wind" },
+          { t: "Maintain directional control with rudder and nosewheel steering" },
+          { t: "Below <em>30 KTS</em> — smoothly apply brakes to safe taxi speed" },
+          { t: "Leave the runway when convenient or as directed" },
+          { t: "AFTER LANDING checklist — when clear of runway and beyond stop bar" }
+        ]
+      },
+      {
+        id: "crosswind-ldg",
+        name: "Crosswind Landing",
+        warning: "Do not land when crosswind exceeds 15 KTS",
+        steps: [
+          { t: "Fly STANDARD CIRCUIT (items 1–19)" },
+          { t: "Correct for crosswind drift on all circuit legs" },
+          { t: "Start flare and horizontal flight just before touchdown" },
+          { t: "Smoothly close the throttle" },
+          { t: "Rudder to align nose with runway centerline" },
+          { t: "Aileron to stay over centerline and control lateral drift (max 15°)" },
+          { t: "Increase pitch attitude, maintain cross control" },
+          { t: "Touch down on <em>upwind wheel</em>" },
+          { t: "Hold backpressure on stick to guard nosewheel" },
+          { t: "Smoothly lower the nose" },
+          { t: "Elevator neutral, maintain stick into the wind" },
+          { t: "Directional control with rudder and nosewheel steering" },
+          { t: "Below <em>30 KTS</em> — apply brakes to safe taxi speed" },
+          { t: "Leave runway. AFTER LANDING checklist beyond stop bar" }
+        ]
+      },
+      {
+        id: "flapless-ldg",
+        name: "Flapless Landing",
+        steps: [
+          { t: "Fly STANDARD CIRCUIT (items 1–7)" },
+          { t: "Reduce throttle to <em>±12–14″ MAP</em> after turning base" },
+          { t: "Descent, pitch for <em>75 KIAS</em>, adjust trim" },
+          { t: "Turn to final ±20°, max 30° bank" },
+          { t: "Call <em>\"Propeller full forward\"</em>" },
+          { t: "Pitch for <em>70 KIAS</em>, adjust trim" },
+          { t: "Establish <em>3° glide path</em>" },
+          { t: "Short final: <em>Propeller full forward</em>" },
+          { t: "Short final: Carb heat OFF" },
+          { t: "Call <em>\"Landing Checklist\"</em>" },
+          { t: "Proceed: NORMAL LANDING (items 2–15)" }
+        ]
+      },
+      {
+        id: "shortfield-ldg",
+        name: "Short Field (Precision) Landing",
+        steps: [
+          { t: "Fly STANDARD CIRCUIT (items 1–13)" },
+          { t: "Pitch for <em>60 KIAS</em>, adjust trim" },
+          { t: "Establish <em>3° glide path</em>" },
+          { t: "Short final: <em>Propeller full forward</em>" },
+          { t: "Short final: Carb heat OFF" },
+          { t: "Call <em>\"Landing Checklist\"</em>" },
+          { t: "Proceed: NORMAL LANDING (items 2–15)" }
+        ]
+      },
+      {
+        id: "softfield-ldg",
+        name: "Soft Field Landing (Grass)",
+        steps: [
+          { t: "Fly STANDARD CIRCUIT (items 1–19)" },
+          { t: "Fly NORMAL LANDING (items 1–7)" },
+          { t: "Smoothly touchdown on main wheels" },
+          { t: "Hold backpressure to guard nosewheel" },
+          { t: "Smoothly and slowly lower the nose" },
+          { t: "Maintain backpressure to minimize pressure on nosewheel" },
+          { t: "Roll out <em>without brakes</em> if possible" },
+          { t: "Keep the aircraft rolling at all times" },
+          { t: "Leave runway when convenient" },
+          { t: "AFTER LANDING checklist while rolling (caution: lookout)" }
+        ]
+      },
+      {
+        id: "touch-and-go",
+        name: "Touch and Go",
+        steps: [
+          { t: "After landing — <em>do not use brakes</em>, maintain runway centerline" },
+          { t: "Call <em>\"Flaps 10\"</em>" },
+          { t: "Confirm carb heat OFF" },
+          { t: "Confirm propeller control full forward" },
+          { t: "Trim set for take-off" },
+          { t: "Throttle smoothly and slowly select <em>full power</em>" },
+          { t: "Proceed: Normal Take-Off (items 12–21)" }
+        ]
+      },
+      {
+        id: "go-around",
+        name: "Go Around",
+        steps: [
+          { t: "Call <em>\"Go Around\"</em>" },
+          { t: "Simultaneously: throttle full power and pitch up to slight climbing attitude" },
+          { t: "Propeller control full forward" },
+          { t: "Carb heat OFF" },
+          { t: "Call <em>\"Flaps 10\"</em>" },
+          { t: "Reset trim and maintain coordinated flight" },
+          { t: "Proceed: NORMAL TAKE-OFF (items 18–21)" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "emergency",
+    cat: "Emergency",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01"/></svg>`,
+    color: "#e24b4a",
+    bg: "rgba(226,75,74,0.15)",
+    procs: [
+      {
+        id: "engine-emergency",
+        name: "Engine Emergency Checks",
+        warning: "IMMEDIATE ACTION — MEMORY ITEMS",
+        steps: [
+          { t: "<strong>IMMEDIATE ACTION</strong>" },
+          { t: "Fuel selector — <em>Other tanks</em>" },
+          { t: "Carb heat — <em>ON</em> (T if OAT ≥10°C)" },
+          { t: "Fuel pump switch — <em>ON</em>" },
+          { t: "Ignition — <em>BOTH</em>" },
+          { t: "Fuel quantity — <em>Check</em>" },
+          { t: "<strong>TROUBLESHOOTING</strong>" },
+          { t: "Ignition — Check L/R for proper running (T)" },
+          { t: "Fuel selector — Check fullest tank" },
+          { t: "Fuel quantity — Checked" },
+          { t: "Engine instruments — Checked" },
+          { t: "<strong>ENGINE RESTART</strong>" },
+          { t: "Fuel pump — ON" },
+          { t: "Fuel selector — Fullest tank" },
+          { t: "Airspeed — <em>75 KIAS</em>" },
+          { t: "Ignition — BOTH" },
+          { t: "Starter — Engage if needed (T)" },
+          { t: "<strong>CRASH DRILL</strong>" },
+          { t: "Seatbelts — Tighten" },
+          { t: "Fuel selector — OFF (T)" },
+          { t: "Fuel pump — OFF (T)" },
+          { t: "Ignition — OFF (T)" },
+          { t: "Flaps — As required" },
+          { t: "Master switch — OFF (T)" }
+        ]
+      },
+      {
+        id: "efato",
+        name: "Engine Failure After Take-off",
+        warning: "IMMEDIATE ACTION — NO TIME TO HESITATE",
+        steps: [
+          { t: "Aggressively pitch down for glide attitude — <em>67 KIAS</em>" },
+          { t: "Select landing area (within ±30° of runway centerline)" },
+          { t: "Execute IMMEDIATE ACTION checks" },
+          { t: "When landing assured — call <em>\"Flaps 10\"</em> (if required)" },
+          { t: "Maintain <em>67 KIAS</em>" },
+          { t: "Execute TROUBLESHOOTING checks (time permitting)" },
+          { t: "Call <em>\"Flaps 25\"</em> (if required)" },
+          { t: "Pitch for <em>65 KIAS</em>" },
+          { t: "Execute CRASH DRILL" },
+          { t: "Touchdown at <em>60 KIAS</em>" },
+          { t: "Execute RTO MANEUVER (items 4–9)" }
+        ],
+        note: "Be aware of increased descent rate — start flare earlier to arrest it."
+      },
+      {
+        id: "forced-ldg",
+        name: "Forced Landing",
+        steps: [
+          { t: "Pitch for Best Glide Speed <em>67 KIAS</em> and adjust trim" },
+          { t: ">1500 ft AGL: turn downwind, select landing area, fly to 1000 ft point" },
+          { t: "<1500 ft AGL: turn directly to base" },
+          { t: "<750 ft AGL: you are on final" },
+          { t: "Execute IMMEDIATE ACTION checks" },
+          { t: "Communicate: Mayday (T) / Transponder 7700 (T) / ELT ON (T)" },
+          { t: "Execute TROUBLESHOOTING (if time)" },
+          { t: "Execute ENGINE RESTART (if warranted)" },
+          { t: "After 1000 ft point — turn to base" },
+          { t: "On final — aim 1/3 down from start of landing field" },
+          { t: "Landing assured — call <em>\"Flaps 10\"</em> (if required)" },
+          { t: "Maintain <em>67 KIAS</em>" },
+          { t: "<em>\"Flaps 25\"</em> (if required), pitch <em>65 KIAS</em>" },
+          { t: "Adjust aimpoint to beginning of field" },
+          { t: "Execute CRASH DRILL" },
+          { t: "Touchdown <em>60 KIAS</em>" },
+          { t: "Execute RTO MANEUVER (items 4–7)" },
+          { t: "Evacuate, ensure safety of all" },
+          { t: "Contact Emergency Services" },
+          { t: "Execute ATO Emergency Response Plan" }
+        ]
+      },
+      {
+        id: "rto",
+        name: "Rejected Take-off (RTO)",
+        steps: [
+          { t: "Retard throttle to <em>idle</em>" },
+          { t: "Apply brakes as necessary and maintain directional control" },
+          { t: "Call <em>\"STOP\"</em>" },
+          { t: "When stopped — set Parking Brake" },
+          { t: "Analyze the situation" },
+          { t: "State nature of failure/malfunction" },
+          { t: "Take appropriate action (MEMORY ITEMS and/or EMERGENCY CHECKLIST)" },
+          { t: "Communicate RTO with ATC (or transmit in blind)" },
+          { t: "Continue with RTO follow-up, secure aircraft, coordinate with ATC" }
+        ],
+        note: "At EHEH for training: inform ATC prior, initiate max 40 KIAS, only when braking action is good."
+      },
+      {
+        id: "glide-in",
+        name: "Glide In (from Circuit Altitude)",
+        steps: [
+          { t: "Fly STANDARD CIRCUIT (items 1–6)" },
+          { t: "Maintain speed <em>80 KIAS</em>" },
+          { t: "Determine the Throttle Idle Point" },
+          { t: "Pitch for Best Glide Speed <em>67 KIAS</em>" },
+          { t: "When landing assured — call <em>\"Propeller full forward\"</em>" },
+          { t: "Call <em>\"Flaps 10\"</em> (if required)" },
+          { t: "Pitch to maintain <em>67 KIAS</em>" },
+          { t: "Trim as required" },
+          { t: "Call <em>\"Flaps 25\"</em> (if required)" },
+          { t: "Pitch for <em>65 KIAS</em>" },
+          { t: "Adjust trim" },
+          { t: "Call <em>\"Landing Checklist\"</em>" },
+          { t: "Touchdown at <em>60 KIAS</em>" },
+          { t: "Execute NORMAL LANDING (items 5–15)" }
+        ],
+        note: "Increased descent rate — flare earlier. ESP-X may engage; override with CWS (5 sec) or disarm in G3X."
+      },
+      {
+        id: "precautionary-ldg",
+        name: "Precautionary Landing",
+        steps: [
+          { t: "Identify suitable landing field, free of obstacles" },
+          { t: "Communicate: PAN PAN (T) / Transponder 7700 (T) / ELT ON (T)" },
+          { t: "Position aircraft on downwind of landing field" },
+          { t: "Descend to circuit altitude <em>500 ft AGL</em>" },
+          { t: "Perform downwind checks" },
+          { t: "Descending turn: inspection run at <em>80 KIAS at 200 ft AGL</em>" },
+          { t: "Check condition of landing area" },
+          { t: "Check heading (poor vis) / aim landmark (good vis)" },
+          { t: "Climb to <em>500 ft AGL</em> on upwind leg" },
+          { t: "Check position for downwind, turn crosswind" },
+          { t: "Locate landing area, continue to downwind" },
+          { t: "Downwind checks" },
+          { t: "Turn to base when area is <em>60° behind</em>" },
+          { t: "Fly SHORT FIELD LANDING procedure" },
+          { t: "Evacuate, ensure safety" },
+          { t: "Contact Emergency Services" },
+          { t: "Execute ATO Emergency Response Plan" }
+        ]
+      }
+    ]
+  }
+];
+
+let state = {
+  view: 'home',
+  catId: null,
+  procId: null,
+  checkedSteps: {},
+  favorites: JSON.parse(localStorage.getItem('b23_favs') || '[]'),
+  darkMode: localStorage.getItem('b23_dark') !== 'false',
+  favView: false,
+  searchQuery: ''
+};
+
+let deferredInstallPrompt = null;
+let installBannerVisible = false;
+let installBannerAction = null;
+
+const APP_TITLE = 'B23 Procedures';
+const APP_THEME = '#0a0a0f';
+const APP_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="42" fill="#0a0a0f"/>
+  <rect x="18" y="18" width="156" height="156" rx="30" fill="#13131a" stroke="#4a9eff" stroke-width="8"/>
+  <path d="M42 114h108" stroke="#4a9eff" stroke-width="10" stroke-linecap="round"/>
+  <path d="M48 78l30 18 24-24 42 24" stroke="#ffaa44" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="146" cy="58" r="12" fill="#44cc88"/>
+</svg>`;
+
+function svgToDataUrl(svg) {
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace(/\s+/g, ' ').trim());
+}
+
+function isStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function saveFavs() { localStorage.setItem('b23_favs', JSON.stringify(state.favorites)); }
+function saveTheme() { localStorage.setItem('b23_dark', state.darkMode); }
+function isFav(pid) { return state.favorites.includes(pid); }
+function toggleFav(pid) {
+  if (isFav(pid)) state.favorites = state.favorites.filter(f => f !== pid);
+  else state.favorites.push(pid);
+  saveFavs();
+}
+
+function getProc(pid) {
+  for (const c of PROCEDURES) {
+    for (const p of c.procs) {
+      if (p.id === pid) return { proc: p, cat: c };
+    }
+  }
+  return null;
+}
+
+function render() {
+  const views = ['home-view','section-view','detail-view','search-view'];
+  views.forEach(v => document.getElementById(v).style.display = 'none');
+
+  if (state.searchQuery.length > 1) {
+    renderSearch();
+    document.getElementById('search-view').style.display = 'block';
+    return;
+  }
+  if (state.favView && !state.searchQuery) {
+    renderFavs();
+    document.getElementById('section-view').style.display = 'block';
+    return;
+  }
+
+  if (state.view === 'home') {
+    renderHome();
+    document.getElementById('home-view').style.display = 'block';
+  } else if (state.view === 'section') {
+    renderSection();
+    document.getElementById('section-view').style.display = 'block';
+  } else if (state.view === 'detail') {
+    renderDetail();
+    document.getElementById('detail-view').style.display = 'block';
+  }
+}
+
+function renderHome() {
+  const el = document.getElementById('home-view');
+  const hasFavs = id => PROCEDURES.find(c => c.id === id)?.procs.some(p => isFav(p.id));
+  el.innerHTML = PROCEDURES.map(c => `
+    <div class="cat-card ${hasFavs(c.id) ? 'has-fav' : ''}" onclick="goSection('${c.id}')">
+      <div class="cat-icon" style="background:${c.bg}; color:${c.color}">${c.icon}</div>
+      <div class="cat-info">
+        <div class="cat-name">${c.cat}</div>
+        <div class="cat-count">${c.procs.length} procedure${c.procs.length !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="cat-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+function renderSection() {
+  const cat = PROCEDURES.find(c => c.id === state.catId);
+  if (!cat) return;
+  const el = document.getElementById('section-view');
+  el.innerHTML = `
+    <div id="section-header">
+      <button class="btn-back-inline" onclick="goHome()" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">‹</button>
+      <div style="font-size:16px;font-weight:700">${cat.cat}</div>
+    </div>
+    ${cat.procs.map(p => {
+      const starred = isFav(p.id);
+      const starSvg = starred
+        ? '<span class="fav-star starred" onclick="event.stopPropagation();toggleFavItem(\'' + p.id + '\')"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"18\" height=\"18\"><path d=\"M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2.25l3.086 5.997 6.9 1.002-4.993 4.867 1.179 6.873z\"/></svg></span>'
+        : '<span class="fav-star" onclick="event.stopPropagation();toggleFavItem(\'' + p.id + '\')"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"18\" height=\"18\"><path d=\"M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2.25l3.086 5.997 6.9 1.002-4.993 4.867 1.179 6.873z\"/></svg></span>';
+      return '<div class="proc-item" onclick="goDetail(\'' + p.id + '\')">'
+        + '<div class="proc-item-name">' + p.name + '</div>'
+        + starSvg
+        + '</div>';
+    }).join('')}
+  `;
+}
+
+function renderFavs() {
+  const el = document.getElementById('section-view');
+  const favProcs = state.favorites.map(pid => getProc(pid)).filter(Boolean);
+  el.innerHTML = `
+    <div id="section-header">
+      <button onclick="toggleFavView()" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">‹</button>
+      <div style="font-size:16px;font-weight:700">Bookmarks</div>
+    </div>
+    ${favProcs.length === 0 ? '<div class="empty">No favorites yet.<br>Tap the bookmark icon on any procedure to add it.</div>' :
+      favProcs.map(({proc, cat}) => `
+        <div class="proc-item" onclick="goDetail('${proc.id}')">
+          <div class="proc-item-name">${proc.name} <span style="font-size:11px;color:var(--text-3)">${cat.cat}</span></div>
+          <span class="fav-star starred" onclick="event.stopPropagation();toggleFavItem('${proc.id}')"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2.25l3.086 5.997 6.9 1.002-4.993 4.867 1.179 6.873z"/></svg></span>
+        </div>
+      `).join('')}
+  `;
+}
+
+function renderDetail() {
+  const found = getProc(state.procId);
+  if (!found) return;
+  const { proc, cat } = found;
+  const key = proc.id;
+  if (!state.checkedSteps[key]) state.checkedSteps[key] = {};
+
+  const el = document.getElementById('detail-view');
+  const fav = isFav(proc.id);
+
+  let html = `
+    <div id="detail-header">
+      <button onclick="goBack()" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;min-width:36px">‹</button>
+      <div id="detail-title">${proc.name}</div>
+      ${(() => {
+      const svgIcon = fav
+        ? '<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"18\" height=\"18\"><path d=\"M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2.25l3.086 5.997 6.9 1.002-4.993 4.867 1.179 6.873z\"/></svg>'
+        : '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"18\" height=\"18\"><path d=\"M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2.25l3.086 5.997 6.9 1.002-4.993 4.867 1.179 6.873z\"/></svg>';
+      return '<button id="detail-fav" class="' + (fav ? 'starred' : '') + '" onclick="toggleFavDetail(\'' + proc.id + '\')">' + svgIcon + '</button>';
+    })()}
+    </div>
+  `;
+
+  if (proc.warning) {
+    html += `<div class="note-block warn-block" style="margin-bottom:10px"><div class="note-label">Warning</div><p>${proc.warning}</p></div>`;
+  }
+  if (proc.note) {
+    html += `<div class="note-block" style="margin-bottom:10px"><div class="note-label">Note</div><p>${proc.note}</p></div>`;
+  }
+
+  html += '<div class="step-list">';
+  proc.steps.forEach((step, i) => {
+    const done = !!state.checkedSteps[key][i];
+    const isHeader = step.t.startsWith('<strong>') && step.t.endsWith('</strong>');
+    if (isHeader) {
+      html += `<div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;padding:10px 4px 2px">${step.t.replace(/<\/?strong>/g,'')}</div>`;
+    } else {
+      html += `
+        <div class="step-item ${done ? 'done' : ''}" onclick="toggleStep('${key}',${i})">
+          <div class="step-num">${done ? '✓' : i+1}</div>
+          <div class="step-text">${step.t}</div>
+        </div>
+      `;
+    }
+  });
+  html += '</div>';
+
+  if (proc.note && !proc.warning) {
+    // already added above
+  } else if (proc.note && proc.warning) {
+    html += `<div class="note-block" style="margin-top:10px"><div class="note-label">Note</div><p>${proc.note}</p></div>`;
+  }
+
+  html += `<button id="reset-btn" onclick="resetSteps('${key}')">Reset checklist</button>`;
+  el.innerHTML = html;
+  el.scrollTop = 0;
+}
+
+function renderSearch() {
+  const q = state.searchQuery.toLowerCase();
+  const el = document.getElementById('search-view');
+  const results = [];
+  for (const cat of PROCEDURES) {
+    for (const proc of cat.procs) {
+      const nameMatch = proc.name.toLowerCase().includes(q);
+      const stepMatch = proc.steps.some(s => s.t.toLowerCase().includes(q));
+      if (nameMatch || stepMatch) results.push({ proc, cat });
+    }
+  }
+  if (results.length === 0) {
+    el.innerHTML = `<div class="empty">No results for "<strong>${state.searchQuery}</strong>"</div>`;
+    return;
+  }
+  el.innerHTML = results.map(({ proc, cat }) => {
+    const hi = proc.name.replace(new RegExp(`(${state.searchQuery})`, 'gi'), '<mark>$1</mark>');
+    return `<div class="search-result" onclick="goDetail('${proc.id}')">
+      <div class="sr-proc">${hi}</div>
+      <div class="sr-cat">${cat.cat}</div>
+    </div>`;
+  }).join('');
+}
+
+function goSection(catId) { state.view = 'section'; state.catId = catId; state.favView = false; render(); }
+function goDetail(procId) { state.view = 'detail'; state.procId = procId; render(); }
+function goHome() { state.view = 'home'; render(); }
+function goBack() {
+  if (state.catId) { state.view = 'section'; render(); }
+  else goHome();
+}
+function toggleFavView() {
+  state.favView = !state.favView;
+  document.getElementById('tab-fav').classList.toggle('active', state.favView);
+  if (state.favView) { state.view = 'home'; state.searchQuery = ''; document.getElementById('search').value = ''; }
+  render();
+}
+function toggleFavItem(pid) { toggleFav(pid); render(); }
+function toggleFavDetail(pid) { toggleFav(pid); render(); }
+
+function toggleStep(key, idx) {
+  if (!state.checkedSteps[key]) state.checkedSteps[key] = {};
+  state.checkedSteps[key][idx] = !state.checkedSteps[key][idx];
+  renderDetail();
+}
+function resetSteps(key) {
+  state.checkedSteps[key] = {};
+  renderDetail();
+}
+
+function onSearch(val) {
+  state.searchQuery = val.trim();
+  state.favView = false;
+  document.getElementById('tab-fav').classList.remove('active');
+  render();
+}
+
+function closeInstallBanner() {
+  installBannerVisible = false;
+  document.getElementById('install-banner').classList.remove('show');
+}
+
+function openInstallBanner(message, actionLabel) {
+  installBannerVisible = true;
+  document.getElementById('install-banner-text').textContent = message;
+  document.getElementById('install-banner-action').textContent = actionLabel;
+  document.getElementById('install-banner').classList.add('show');
+}
+
+function updateInstallButton() {
+  const btn = document.getElementById('btn-install');
+  const label = btn.querySelector('.install-label');
+  btn.classList.toggle('ready', !!deferredInstallPrompt);
+
+  if (isStandaloneMode()) {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'default';
+    btn.title = 'App already installed';
+    if (label) label.textContent = 'Installed';
+    return;
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+  btn.title = deferredInstallPrompt ? 'Install app' : 'Install help';
+  if (label) label.textContent = deferredInstallPrompt ? 'Install' : 'Add App';
+}
+
+async function triggerInstall() {
+  if (isStandaloneMode()) return;
+
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice.catch(() => null);
+    deferredInstallPrompt = null;
+    updateInstallButton();
+    closeInstallBanner();
+    if (choice && choice.outcome !== 'accepted') {
+      installBannerAction = closeInstallBanner;
+      openInstallBanner('Install cancelled. You can tap the button again whenever you want to add the app.', 'Close');
+    }
+    return;
+  }
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isIOS && isSafari) {
+    installBannerAction = closeInstallBanner;
+    openInstallBanner('Open Safari share menu and choose "Add to Home Screen" to install this app as a PWA.', 'Close');
+    return;
+  }
+
+  installBannerAction = closeInstallBanner;
+  openInstallBanner('Install is available in browsers that support web app prompts. On desktop Chrome or Edge this button will activate automatically.', 'Close');
+}
+
+function toggleTheme() {
+  state.darkMode = !state.darkMode;
+  document.body.classList.toggle('light-mode', !state.darkMode);
+  document.getElementById('btn-theme').innerHTML = state.darkMode ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+  saveTheme();
+}
+
+window.addEventListener('offline', () => { document.getElementById('offline-banner').style.display = 'block'; });
+window.addEventListener('online', () => { document.getElementById('offline-banner').style.display = 'none'; });
+
+document.body.classList.toggle('light-mode', !state.darkMode);
+document.getElementById('btn-theme').innerHTML = state.darkMode ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+document.getElementById('manifest-link').href = URL.createObjectURL(new Blob([JSON.stringify({
+  name: APP_TITLE,
+  short_name: 'B23',
+  start_url: './',
+  display: 'standalone',
+  background_color: APP_THEME,
+  theme_color: APP_THEME,
+  icons: [
+    { src: svgToDataUrl(APP_ICON_SVG), sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' }
+  ]
+})], { type: 'application/manifest+json' }));
+document.getElementById('install-banner-action').onclick = () => (installBannerAction || triggerInstall)();
+updateInstallButton();
+render();
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  updateInstallButton();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  closeInstallBanner();
+  updateInstallButton();
+});
+
+if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE = 'b23-v2';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll([location.pathname])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+    const rc = res.clone();
+    caches.open(CACHE).then(c => c.put(e.request, rc));
+    return res;
+  }).catch(() => caches.match('/'))));
+});`;
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+</script>
+</body>
+</html>
