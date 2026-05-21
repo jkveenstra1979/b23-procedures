@@ -1,4 +1,4 @@
-const CACHE = 'b23-v5';
+const CACHE = 'b23-v6';
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
   self.skipWaiting();
