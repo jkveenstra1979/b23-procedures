@@ -253,19 +253,22 @@
   }
   #install-banner.show { display: block; }
   #install-banner-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  #install-banner-text { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+  .iv { display: none; margin-top: 10px; }
+  .iv.active { display: block; }
+  .bm { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-bottom: 10px; }
+  .bm-bar { display: flex; align-items: center; gap: 5px; background: var(--surface2); border-radius: 6px; padding: 5px 8px; }
+  .bm-spread { justify-content: space-around; }
+  .bm-url { flex: 1; font-size: 10px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bm-btn { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 5px; color: var(--text-3); flex-shrink: 0; }
+  .bm-btn.bm-hl { background: rgba(74,158,255,0.15); border: 1.5px solid var(--accent); color: var(--accent); }
+  .bm-hint { font-size: 11px; color: var(--accent); font-weight: 700; margin-top: 5px; text-align: right; }
+  .bm-hint-c { text-align: center; }
   .install-steps { display: flex; flex-direction: column; gap: 8px; }
-  .install-step { display: flex; align-items: center; gap: 10px; }
-  .install-step-num {
-    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
-    background: var(--accent); color: #fff;
-    font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .install-step { display: flex; align-items: flex-start; gap: 10px; }
+  .install-step-num { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
   .install-step-text { font-size: 13px; color: var(--text-2); line-height: 1.4; }
   .install-step-text strong { color: var(--text); }
-  .install-icon-inline { display: inline-flex; vertical-align: middle; color: var(--accent); margin: 0 2px; }
-  .install-note { font-size: 12px; color: var(--text-3); margin-top: 6px; line-height: 1.4; }
+  .install-note { font-size: 12px; color: var(--text-3); margin-top: 8px; line-height: 1.4; }
   #install-banner-actions { display: flex; gap: 8px; margin-top: 10px; }
   .install-banner-btn {
     border: 1px solid var(--border);
@@ -295,9 +298,83 @@
 <div id="offline-banner">— Offline — cached procedures available</div>
 <div id="install-banner" role="status" aria-live="polite">
   <div id="install-banner-title">App installeren</div>
-  <div id="install-banner-text"></div>
+
+  <div class="iv" id="iv-ios">
+    <div class="bm">
+      <div class="bm-bar bm-spread">
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></div>
+      </div>
+      <div class="bm-hint bm-hint-c">↑ tik hier — Safari-balk onderaan</div>
+    </div>
+    <div class="install-steps">
+      <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Tik op het <strong>deel-icoon</strong> (pijl omhoog) onderaan Safari</span></div>
+      <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Scroll en tik op <strong>„Zet op beginscherm"</strong></span></div>
+      <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Tik rechtsboven op <strong>Voeg toe</strong></span></div>
+    </div>
+  </div>
+
+  <div class="iv" id="iv-ios-other">
+    <div class="install-steps">
+      <div class="install-step"><span class="install-step-num" style="background:var(--warning);color:#000">!</span><span class="install-step-text">Open deze pagina in <strong>Safari</strong> om de app te installeren</span></div>
+    </div>
+    <p class="install-note">Chrome en Firefox op iOS ondersteunen geen PWA-installatie. Kopieer de URL en open hem in Safari.</p>
+  </div>
+
+  <div class="iv" id="iv-mac-safari">
+    <div class="bm">
+      <div class="bm-bar">
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="bm-url">b23-procedures.vercel.app</div>
+        <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+      </div>
+      <div class="bm-hint">↑ klik hier — Safari-werkbalk rechts</div>
+    </div>
+    <div class="install-steps">
+      <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>deel-icoon</strong> rechts in de Safari-werkbalk</span></div>
+      <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Kies <strong>„Voeg toe aan beginscherm…"</strong></span></div>
+      <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Klik op <strong>Voeg toe</strong></span></div>
+    </div>
+  </div>
+
+  <div class="iv" id="iv-android">
+    <div class="bm">
+      <div class="bm-bar">
+        <div class="bm-url">b23-procedures.vercel.app</div>
+        <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></div>
+      </div>
+      <div class="bm-hint">↑ tik hier — menu rechtsboven in Chrome</div>
+    </div>
+    <div class="install-steps">
+      <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Tik op <strong>⋮</strong> rechtsboven in Chrome</span></div>
+      <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Tik op <strong>„App installeren"</strong> of <strong>„Toevoegen aan beginscherm"</strong></span></div>
+    </div>
+  </div>
+
+  <div class="iv" id="iv-desktop">
+    <div class="bm">
+      <div class="bm-bar">
+        <div class="bm-url">🔒 b23-procedures.vercel.app</div>
+        <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M12 8v5m-2.5-2.5L12 13l2.5-2.5"/></svg></div>
+      </div>
+      <div class="bm-hint">↑ klik hier — adresbalk rechts (Chrome / Edge)</div>
+    </div>
+    <div class="install-steps">
+      <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>installeer-icoon</strong> rechts in de adresbalk</span></div>
+      <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Klik op <strong>„Installeren"</strong></span></div>
+    </div>
+    <p class="install-note">Icoon niet zichtbaar? Menu (⋮) → „B23 Procedures installeren".</p>
+  </div>
+
+  <div class="iv" id="iv-cancelled">
+    <p class="install-note" style="color:var(--text-2);font-size:13px">Geannuleerd. Tik opnieuw op „Add App" om de app later toe te voegen.</p>
+  </div>
+
   <div id="install-banner-actions">
-    <button class="install-banner-btn primary" id="install-banner-action" type="button">Installeren</button>
     <button class="install-banner-btn" type="button" onclick="closeInstallBanner()">Sluiten</button>
   </div>
 </div>
@@ -1123,7 +1200,6 @@ let state = {
 
 let deferredInstallPrompt = null;
 let installBannerVisible = false;
-let installBannerAction = null;
 
 const APP_TITLE = 'B23 Procedures';
 const APP_THEME = '#0a0a0f';
@@ -1363,10 +1439,11 @@ function closeInstallBanner() {
   document.getElementById('install-banner').classList.remove('show');
 }
 
-function openInstallBanner(html, actionLabel) {
+function showInstallVariant(id) {
+  document.querySelectorAll('.iv').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
   installBannerVisible = true;
-  document.getElementById('install-banner-text').innerHTML = html;
-  document.getElementById('install-banner-action').textContent = actionLabel;
   document.getElementById('install-banner').classList.add('show');
 }
 
@@ -1394,11 +1471,6 @@ function updateInstallButton() {
 async function triggerInstall() {
   if (isStandaloneMode()) return;
 
-  const SVG_SHARE = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><path d=”M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8”/><polyline points=”16 6 12 2 8 6”/><line x1=”12” y1=”2” x2=”12” y2=”15”/></svg>';
-  const SVG_MENU = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><circle cx=”12” cy=”5” r=”1”/><circle cx=”12” cy=”12” r=”1”/><circle cx=”12” cy=”19” r=”1”/></svg>';
-  const SVG_DESKTOP = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><rect x=”2” y=”3” width=”20” height=”14” rx=”2”/><path d=”M8 21h8M12 17v4”/><path d=”M12 7v6m-3-3 3 3 3-3”/></svg>';
-  const SVG_SAFARI = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><circle cx=”12” cy=”12” r=”10”/><path d=”m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z”/></svg>';
-
   if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     const choice = await deferredInstallPrompt.userChoice.catch(() => null);
@@ -1406,8 +1478,7 @@ async function triggerInstall() {
     updateInstallButton();
     closeInstallBanner();
     if (choice && choice.outcome !== 'accepted') {
-      installBannerAction = closeInstallBanner;
-      openInstallBanner('<div class=”install-steps”><div class=”install-step”><span class=”install-step-text”>Installatie geannuleerd. Tik opnieuw op de knop als je de app later wil toevoegen.</span></div></div>', 'Sluiten');
+      showInstallVariant('iv-cancelled');
     }
     return;
   }
@@ -1415,53 +1486,13 @@ async function triggerInstall() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isAndroid = /android/i.test(navigator.userAgent);
+  const isMac = /macintosh/i.test(navigator.userAgent);
 
-  if (isIOS && isSafari) {
-    installBannerAction = closeInstallBanner;
-    openInstallBanner(
-      '<div class=”install-steps”>' +
-        '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_SHARE + '</span> <strong>onderaan</strong> het Safari-scherm</span></div>' +
-        '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Scroll omlaag en tik op <strong>„Zet op beginscherm”</strong></span></div>' +
-        '<div class=”install-step”><span class=”install-step-num”>3</span><span class=”install-step-text”>Tik rechtsboven op <strong>Voeg toe</strong></span></div>' +
-      '</div>',
-      'Sluiten'
-    );
-    return;
-  }
-
-  if (isIOS && !isSafari) {
-    installBannerAction = closeInstallBanner;
-    openInstallBanner(
-      '<div class=”install-steps”>' +
-        '<div class=”install-step”><span class=”install-icon-inline”>' + SVG_SAFARI + '</span><span class=”install-step-text”><strong>Open deze pagina in Safari</strong></span></div>' +
-      '</div>' +
-      '<p class=”install-note”>Chrome en Firefox op iOS ondersteunen geen PWA-installatie. Kopieer de URL en plak hem in Safari.</p>',
-      'Sluiten'
-    );
-    return;
-  }
-
-  if (isAndroid) {
-    installBannerAction = closeInstallBanner;
-    openInstallBanner(
-      '<div class=”install-steps”>' +
-        '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_MENU + '</span> <strong>rechtsboven</strong> in Chrome</span></div>' +
-        '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Tik op <strong>„App installeren”</strong> of <strong>„Toevoegen aan beginscherm”</strong></span></div>' +
-      '</div>',
-      'Sluiten'
-    );
-    return;
-  }
-
-  installBannerAction = closeInstallBanner;
-  openInstallBanner(
-    '<div class=”install-steps”>' +
-      '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_DESKTOP + '</span> <strong>rechts in de adresbalk</strong> van Chrome of Edge</span></div>' +
-      '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Klik op <strong>„Installeren”</strong></span></div>' +
-    '</div>' +
-    '<p class=”install-note”>Zie je het icoon niet? Open het menu (⋮) → „B23 Procedures installeren”.</p>',
-    'Sluiten'
-  );
+  if (isIOS && isSafari)  { showInstallVariant('iv-ios'); return; }
+  if (isIOS && !isSafari) { showInstallVariant('iv-ios-other'); return; }
+  if (isMac && isSafari)  { showInstallVariant('iv-mac-safari'); return; }
+  if (isAndroid)          { showInstallVariant('iv-android'); return; }
+  showInstallVariant('iv-desktop');
 }
 
 function toggleTheme() {
@@ -1476,7 +1507,6 @@ window.addEventListener('online', () => { document.getElementById('offline-banne
 
 document.body.classList.toggle('light-mode', !state.darkMode);
 document.getElementById('btn-theme').innerHTML = state.darkMode ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-document.getElementById('install-banner-action').onclick = () => (installBannerAction || triggerInstall)();
 updateInstallButton();
 render();
 
