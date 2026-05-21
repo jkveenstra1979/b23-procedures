@@ -253,7 +253,19 @@
   }
   #install-banner.show { display: block; }
   #install-banner-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  #install-banner-text { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+  #install-banner-text { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+  .install-steps { display: flex; flex-direction: column; gap: 8px; }
+  .install-step { display: flex; align-items: center; gap: 10px; }
+  .install-step-num {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .install-step-text { font-size: 13px; color: var(--text-2); line-height: 1.4; }
+  .install-step-text strong { color: var(--text); }
+  .install-icon-inline { display: inline-flex; vertical-align: middle; color: var(--accent); margin: 0 2px; }
+  .install-note { font-size: 12px; color: var(--text-3); margin-top: 6px; line-height: 1.4; }
   #install-banner-actions { display: flex; gap: 8px; margin-top: 10px; }
   .install-banner-btn {
     border: 1px solid var(--border);
@@ -1351,9 +1363,9 @@ function closeInstallBanner() {
   document.getElementById('install-banner').classList.remove('show');
 }
 
-function openInstallBanner(message, actionLabel) {
+function openInstallBanner(html, actionLabel) {
   installBannerVisible = true;
-  document.getElementById('install-banner-text').textContent = message;
+  document.getElementById('install-banner-text').innerHTML = html;
   document.getElementById('install-banner-action').textContent = actionLabel;
   document.getElementById('install-banner').classList.add('show');
 }
@@ -1382,6 +1394,11 @@ function updateInstallButton() {
 async function triggerInstall() {
   if (isStandaloneMode()) return;
 
+  const SVG_SHARE = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><path d=”M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8”/><polyline points=”16 6 12 2 8 6”/><line x1=”12” y1=”2” x2=”12” y2=”15”/></svg>';
+  const SVG_MENU = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><circle cx=”12” cy=”5” r=”1”/><circle cx=”12” cy=”12” r=”1”/><circle cx=”12” cy=”19” r=”1”/></svg>';
+  const SVG_DESKTOP = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><rect x=”2” y=”3” width=”20” height=”14” rx=”2”/><path d=”M8 21h8M12 17v4”/><path d=”M12 7v6m-3-3 3 3 3-3”/></svg>';
+  const SVG_SAFARI = '<svg viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5” stroke-linecap=”round” stroke-linejoin=”round” width=”16” height=”16”><circle cx=”12” cy=”12” r=”10”/><path d=”m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z”/></svg>';
+
   if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     const choice = await deferredInstallPrompt.userChoice.catch(() => null);
@@ -1390,27 +1407,61 @@ async function triggerInstall() {
     closeInstallBanner();
     if (choice && choice.outcome !== 'accepted') {
       installBannerAction = closeInstallBanner;
-      openInstallBanner('Install cancelled. You can tap the button again whenever you want to add the app.', 'Close');
+      openInstallBanner('<div class=”install-steps”><div class=”install-step”><span class=”install-step-text”>Installatie geannuleerd. Tik opnieuw op de knop als je de app later wil toevoegen.</span></div></div>', 'Sluiten');
     }
     return;
   }
 
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+
   if (isIOS && isSafari) {
     installBannerAction = closeInstallBanner;
-    openInstallBanner('Tik op het deel-icoon ↗ onderaan Safari (het vierkantje met pijltje omhoog), scroll dan naar „Zet op beginscherm” en tik op Voeg toe.', 'Sluiten');
+    openInstallBanner(
+      '<div class=”install-steps”>' +
+        '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_SHARE + '</span> <strong>onderaan</strong> het Safari-scherm</span></div>' +
+        '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Scroll omlaag en tik op <strong>„Zet op beginscherm”</strong></span></div>' +
+        '<div class=”install-step”><span class=”install-step-num”>3</span><span class=”install-step-text”>Tik rechtsboven op <strong>Voeg toe</strong></span></div>' +
+      '</div>',
+      'Sluiten'
+    );
     return;
   }
 
   if (isIOS && !isSafari) {
     installBannerAction = closeInstallBanner;
-    openInstallBanner('Open deze pagina in Safari om de app te installeren. Chrome en Firefox op iOS ondersteunen PWA-installatie niet.', 'Sluiten');
+    openInstallBanner(
+      '<div class=”install-steps”>' +
+        '<div class=”install-step”><span class=”install-icon-inline”>' + SVG_SAFARI + '</span><span class=”install-step-text”><strong>Open deze pagina in Safari</strong></span></div>' +
+      '</div>' +
+      '<p class=”install-note”>Chrome en Firefox op iOS ondersteunen geen PWA-installatie. Kopieer de URL en plak hem in Safari.</p>',
+      'Sluiten'
+    );
+    return;
+  }
+
+  if (isAndroid) {
+    installBannerAction = closeInstallBanner;
+    openInstallBanner(
+      '<div class=”install-steps”>' +
+        '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_MENU + '</span> <strong>rechtsboven</strong> in Chrome</span></div>' +
+        '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Tik op <strong>„App installeren”</strong> of <strong>„Toevoegen aan beginscherm”</strong></span></div>' +
+      '</div>',
+      'Sluiten'
+    );
     return;
   }
 
   installBannerAction = closeInstallBanner;
-  openInstallBanner('Installeren werkt automatisch in Chrome of Edge op desktop en Android. Tik op de installatieknop in de adresbalk.', 'Sluiten');
+  openInstallBanner(
+    '<div class=”install-steps”>' +
+      '<div class=”install-step”><span class=”install-step-num”>1</span><span class=”install-step-text”>Tik op <span class=”install-icon-inline”>' + SVG_DESKTOP + '</span> <strong>rechts in de adresbalk</strong> van Chrome of Edge</span></div>' +
+      '<div class=”install-step”><span class=”install-step-num”>2</span><span class=”install-step-text”>Klik op <strong>„Installeren”</strong></span></div>' +
+    '</div>' +
+    '<p class=”install-note”>Zie je het icoon niet? Open het menu (⋮) → „B23 Procedures installeren”.</p>',
+    'Sluiten'
+  );
 }
 
 function toggleTheme() {
