@@ -270,6 +270,22 @@
   .install-step-text strong { color: var(--text); }
   .install-note { font-size: 12px; color: var(--text-3); margin-top: 8px; line-height: 1.4; }
   #install-banner-actions { display: flex; gap: 8px; margin-top: 10px; }
+  /* Install modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 500; align-items: flex-end; }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet { background: var(--surface); border-radius: 20px 20px 0 0; padding: 16px 20px 40px; width: 100%; border-top: 1px solid var(--border); }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-app-hdr { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .modal-app-icon { width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0; }
+  .modal-app-name { font-size: 17px; font-weight: 700; color: var(--text); }
+  .modal-app-url { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .modal-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 14px; }
+  .miv { display: none; }
+  .miv.active { display: block; }
+  .modal-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .modal-btn { width: 100%; height: 46px; border-radius: 14px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .modal-btn-primary { background: var(--accent); color: #fff; }
+  .modal-btn-secondary { background: transparent; color: var(--text-3); font-size: 13px; height: 36px; }
   .install-banner-btn {
     border: 1px solid var(--border);
     background: var(--surface);
@@ -376,6 +392,88 @@
 
   <div id="install-banner-actions">
     <button class="install-banner-btn" type="button" onclick="closeInstallBanner()">Sluiten</button>
+  </div>
+</div>
+<div id="install-modal" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-app-hdr">
+      <img src="/apple-touch-icon.png" class="modal-app-icon" alt="B23">
+      <div>
+        <div class="modal-app-name">B23 Procedures</div>
+        <div class="modal-app-url">b23-procedures.vercel.app</div>
+      </div>
+    </div>
+    <p class="modal-desc">Voeg de app toe aan je beginscherm voor snelle toegang, ook offline. Geen app store nodig.</p>
+
+    <div class="miv" id="miv-ios">
+      <div class="bm">
+        <div class="bm-bar bm-spread">
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg></div>
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></div>
+        </div>
+        <div class="bm-hint bm-hint-c">↑ tik hier — Safari-balk onderaan</div>
+      </div>
+      <div class="install-steps">
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Tik op het <strong>deel-icoon</strong> (pijl omhoog) onderaan Safari</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Scroll en tik op <strong>„Zet op beginscherm"</strong></span></div>
+        <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Tik rechtsboven op <strong>Voeg toe</strong></span></div>
+      </div>
+    </div>
+
+    <div class="miv" id="miv-mac-safari">
+      <div class="bm">
+        <div class="bm-bar">
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg></div>
+          <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="bm-url">b23-procedures.vercel.app</div>
+          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        </div>
+        <div class="bm-hint">↑ klik hier — Safari-werkbalk rechts</div>
+      </div>
+      <div class="install-steps">
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>deel-icoon</strong> rechts in de Safari-werkbalk</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Kies <strong>„Voeg toe aan beginscherm…"</strong></span></div>
+        <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Klik op <strong>Voeg toe</strong></span></div>
+      </div>
+    </div>
+
+    <div class="miv" id="miv-android">
+      <div class="bm">
+        <div class="bm-bar">
+          <div class="bm-url">b23-procedures.vercel.app</div>
+          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></div>
+        </div>
+        <div class="bm-hint">↑ tik hier — menu rechtsboven in Chrome</div>
+      </div>
+      <div class="install-steps">
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Tik op <strong>⋮</strong> rechtsboven in Chrome</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Tik op <strong>„App installeren"</strong></span></div>
+      </div>
+    </div>
+
+    <div class="miv" id="miv-desktop">
+      <div class="bm">
+        <div class="bm-bar">
+          <div class="bm-url">🔒 b23-procedures.vercel.app</div>
+          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M12 8v5m-2.5-2.5L12 13l2.5-2.5"/></svg></div>
+        </div>
+        <div class="bm-hint">↑ klik hier — adresbalk rechts (Chrome / Edge)</div>
+      </div>
+      <div class="install-steps">
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>installeer-icoon</strong> rechts in de adresbalk</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Klik op <strong>„Installeren"</strong></span></div>
+      </div>
+      <p class="install-note">Icoon niet zichtbaar? Menu (⋮) → „B23 Procedures installeren".</p>
+    </div>
+
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-primary" onclick="dismissInstallModal(false)">Sluiten</button>
+      <button class="modal-btn modal-btn-secondary" onclick="dismissInstallModal(true)">Niet meer tonen</button>
+    </div>
   </div>
 </div>
 <div id="app">
@@ -1447,6 +1545,29 @@ function showInstallVariant(id) {
   document.getElementById('install-banner').classList.add('show');
 }
 
+function showInstallModal() {
+  if (localStorage.getItem('b23_no_install') === '1') return;
+  if (isStandaloneMode()) return;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isMac = /macintosh/i.test(navigator.userAgent);
+  let id = null;
+  if (isIOS && isSafari)  id = 'miv-ios';
+  else if (isMac && isSafari) id = 'miv-mac-safari';
+  else if (isAndroid)     id = 'miv-android';
+  else if (!isIOS)        id = 'miv-desktop';
+  if (!id) return;
+  document.querySelectorAll('.miv').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('install-modal').classList.add('show');
+}
+
+function dismissInstallModal(permanent) {
+  if (permanent) localStorage.setItem('b23_no_install', '1');
+  document.getElementById('install-modal').classList.remove('show');
+}
+
 function updateInstallButton() {
   const btn = document.getElementById('btn-install');
   const label = btn.querySelector('.install-label');
@@ -1509,6 +1630,7 @@ document.body.classList.toggle('light-mode', !state.darkMode);
 document.getElementById('btn-theme').innerHTML = state.darkMode ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 updateInstallButton();
 render();
+setTimeout(showInstallModal, 1500);
 
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
