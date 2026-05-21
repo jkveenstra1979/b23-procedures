@@ -263,6 +263,8 @@
   .bm-btn.bm-hl { background: rgba(74,158,255,0.15); border: 1.5px solid var(--accent); color: var(--accent); }
   .bm-hint { font-size: 11px; color: var(--accent); font-weight: 700; margin-top: 5px; text-align: right; }
   .bm-hint-c { text-align: center; }
+  .bm-hl-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .bm-hl-label { font-size: 10px; color: var(--accent); font-weight: 700; white-space: nowrap; }
   .install-steps { display: flex; flex-direction: column; gap: 8px; }
   .install-step { display: flex; align-items: flex-start; gap: 10px; }
   .install-step-num { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
@@ -435,9 +437,11 @@
           <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg></div>
           <div class="bm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18l6-6-6-6"/></svg></div>
           <div class="bm-url">b23-procedures.vercel.app</div>
-          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+          <div class="bm-hl-wrap">
+            <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+            <span class="bm-hl-label">↑ klik hier</span>
+          </div>
         </div>
-        <div class="bm-hint">↑ klik hier — Safari-werkbalk rechts</div>
       </div>
       <div class="install-steps">
         <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>deel-icoon</strong> rechts in de Safari-werkbalk</span></div>
@@ -464,9 +468,11 @@
       <div class="bm">
         <div class="bm-bar">
           <div class="bm-url">🔒 b23-procedures.vercel.app</div>
-          <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M12 8v5m-2.5-2.5L12 13l2.5-2.5"/></svg></div>
+          <div class="bm-hl-wrap">
+            <div class="bm-btn bm-hl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M12 8v5m-2.5-2.5L12 13l2.5-2.5"/></svg></div>
+            <span class="bm-hl-label">↑ klik hier</span>
+          </div>
         </div>
-        <div class="bm-hint">↑ klik hier — adresbalk rechts (Chrome / Edge)</div>
       </div>
       <div class="install-steps">
         <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Klik op het <strong>installeer-icoon</strong> rechts in de adresbalk</span></div>
